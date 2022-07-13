@@ -94,4 +94,4 @@ if __name__ == "__main__":
                 telescope_motor_api=pi_controller()
             )
 
-    # pointer.align(
+    # pointer.align(dgbsdhfb

@@ -15,7 +15,7 @@ altitude_motor.motor_run(gpiopins=alt_pins, wait=.003, steps=1536, ccwise=False,
 
 class azimuth_motor():
     def __init__(self, rpimotor_function):
-        self.name = ""
+        ssself.name = ""
 ###########################
 # Actual motor control
 
