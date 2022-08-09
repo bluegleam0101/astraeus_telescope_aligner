@@ -3,7 +3,7 @@ import csv
 import threading
 import geocoder
 from skyfield.api import load, Angle
-from pi_motor_controller import pi_controller
+from motor_controller import 
 from skyfield.api import N, W, wgs84
 
 ts = load.timescale()
@@ -14,7 +14,7 @@ earth = planets['earth']
 
 
 class TelescopePointer:
-    def __init__(self, telescope_motor_api):
+    def __init__(self, azimuthmotor_fm, altitudemotor_fm):
         self.earth = planets['earth']
         self.target = {}
 
