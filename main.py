@@ -5,7 +5,7 @@ from datetime import datetime
 import astropy.units as units
 from astropy.time import Time
 from astropy.coordinates import SkyCoord, EarthLocation, AltAz
-from motor_controller import TelescopeMotorController
+from motor_controller import TelescopeMotorController, AltitudeMotor, AzimuthMotor
 
 
 ts = load.timescale()
@@ -22,14 +22,16 @@ class TelescopePointer:
     def set_target(self, query, latlng):
         """gets current ra, dec, distance, altitude and azimuth for a celestial object specified by the 'celestial_body' parameter,
          sets target. target astrometrics (ra, dec) given in floating point numbers which are degrees"""
+
         time = Time(datetime.now()) 
         geo_location = EarthLocation(lat=latlng[0]*units.deg, lon=latlng[0]*units.deg, height=5*units.m)
+
         self.target = SkyCoord.from_name(query)
         self.target = self.target.transform_to(AltAz(obstime=time,location=geo_location))
         print(self.target.az, self.target.alt, self.target.info)
         print(
-            #f"right inclination axis: {self.target['ra']} degrees\n"
-            #f"declination axis: {self.target['dec']} degrees\n"
+            f"right inclination axis: {self.target.transform_to(BaseRADecFrame(obstime=time)).ra} degrees\n"
+            f"declination axis: {self.target.transform_to(BaseRADecFrame(obstime=time)).dec} degrees\n"
             #f"distance: {self.target['dis']}\n"
             f"local altitude: {self.target.alt}\n"
             f"local azimuth: {self.target.az}\n"
@@ -40,22 +42,17 @@ class TelescopePointer:
 
 
 
-##initializing classes and subclasses##
+## initializing objects ##
+
+telescope_motor_api = TelescopeMotorController(
+    az_motor=AzimuthMotor(rpimotor_function=RpiMotorLib.A4988Nema(direction, step, (21,21,21), "DRV8825"), gpiopins="bonjupr",steps_360=200)
+    alt_motor=AltitudeMotor() 
+    )
 
 
-telescope_motor_api = TelescopeMotorController()
-
-az_motor = telescope_motor_api.AzimuthMotor(rpimotor_function=RpiMotorLib.A4988Nema(direction, step, (21,21,21), "DRV8825"), gpiopins="bonjupr",steps_360=200)
-alt_motor = telescope_motor_api.AltitudeMotor()
 pointer = TelescopeInterface(altitudemotor_fm=alt_motor, azimuthmotor_fm=az_motor)
 
 
-
-
-
-
-
-######main program#######
 
     # align func is a function you have to pass that takes a ra- and dec axis and points the telescopes
 
@@ -69,7 +66,7 @@ pointer = TelescopeInterface(altitudemotor_fm=alt_motor, azimuthmotor_fm=az_moto
         changed using the continuous_interval parameter)
         """
         if not continuous:
-            telescope_motor_api(self.target['ra'], self.target['dec'])
+            telescope_motor_api(az=self.target.az, alt=self.target.alt)
             print("aligning was successful")
 
         if continuous:
@@ -81,7 +78,7 @@ pointer = TelescopeInterface(altitudemotor_fm=alt_motor, azimuthmotor_fm=az_moto
 
     def display_text(self, text):
         pass
-
+######
 
 pointer = TelescopePointer(pi_controller)
 
