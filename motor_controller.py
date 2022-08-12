@@ -1,7 +1,6 @@
-#import RPi.GPIO as GPIO
-from msilib.schema import Class
+import RPi.GPIO as GPIO
 import time
-#from RpiMotorLib import RpiMotorLib
+from RpiMotorLib import RpiMotorLib
 
 alt_pins = (17, 18, 27, 22)
 direction= 16 
