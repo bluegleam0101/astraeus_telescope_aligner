@@ -1,3 +1,4 @@
+from ast import Pass
 import time
 import csv
 import gpiozero
@@ -36,51 +37,37 @@ class TelescopePointer:
             f"local altitude: {self.target.alt}\n"
             f"local azimuth: {self.target.az}\n"
         )
-
-
-
-
-
-
 ## initializing objects ##
 
-telescope_motor_api = TelescopeMotorController(
-    az_motor=AzimuthMotor(rpimotor_function=RpiMotorLib.A4988Nema(direction, step, (21,21,21), "DRV8825"), gpiopins="bonjupr",steps_360=200)
-    alt_motor=AltitudeMotor() 
-    )
-
-
-pointer = TelescopeInterface(altitudemotor_fm=alt_motor, azimuthmotor_fm=az_motor)
-
-
+telescope_motor_api = TelescopeMotorController(az_motor=AzimuthMotor(rpimotor_function=RpiMotorLib.A4988Nema(direction, step, (21,21,21), "DRV8825"), gpiopins=Pass,steps_360=200,)
+    alt_motor=AltitudeMotor() )
 
     # align func is a function you have to pass that takes a ra- and dec axis and points the telescopes
 
-    def align(self, ra, dec, telescope_motor_api, continuous=False, continuous_interval=10):
-        """
-        Aligns telescope by calling upon the telescope_motor_api function (that you have to create yourself).
+def align(self, ra, dec, telescope_motor_api, continuous=False, continuous_interval=10):
+    """
+    Aligns telescope by calling upon the telescope_motor_api function (that you have to create yourself).
 
-        takes ra and dec, both in degrees.
+    takes ra and dec, both in degrees.
 
-        Set continuous to True if you want to keep aligning at an interval of 10 seconds. (10 is default but can be
-        changed using the continuous_interval parameter)
-        """
-        if not continuous:
-            telescope_motor_api(az=self.target.az, alt=self.target.alt)
-            print("aligning was successful")
+    Set continuous to True if you want to keep aligning at an interval of 10 seconds. (10 is default but can be
+    changed using the continuous_interval parameter)
+    """
+    if not continuous:
+        telescope_motor_api(az=self.target.az, alt=self.target.alt)
+        print("aligning was successful")
 
-        if continuous:
-            print("continuously aligning...\nssss")
-            while True:
-                telescope_motor_api(ra=self.ra, dec=self.dec)
-                print('aligned')
-                time.sleep(continuous_interval)
+    if continuous:
+        print("continuously aligning...\nssss")
+        while True:
+            telescope_motor_api(ra=self.ra, dec=self.dec)
+            print('aligned')
+            time.sleep(continuous_interval)
 
-    def display_text(self, text):
-        pass
+def display_text(self, text):
+    pass
 ######
 
-pointer = TelescopePointer(pi_controller)
 
 if __name__ == "__main__":
     while True:

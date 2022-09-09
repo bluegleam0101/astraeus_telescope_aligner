@@ -54,8 +54,8 @@ class AzimuthMotor():
         a = (a + 180) % 360 - 180
         self.degrees_to_turn = a
         
-        self.steps = int((a/360)*steps_360) 
-        print(degrees_to_turn)
+        self.steps = int((a/360)*self.steps_360) 
+        print(self.degrees_to_turn)
 
 
 
